@@ -75,7 +75,7 @@ WSGI_APPLICATION = "FitConnectProjectDjango.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# change to your database connection
+# change to your database connection -------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
