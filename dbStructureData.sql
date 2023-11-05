@@ -10,6 +10,7 @@ CREATE TABLE user (
   gender ENUM('Male', 'Female'),
   birth_date DATE,
   creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -17,6 +18,7 @@ CREATE TABLE user_credentials (
   user_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   salt VARCHAR(64) NOT NULL,
   hashed_password VARCHAR(64) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -65,12 +67,14 @@ CREATE TABLE progress_photo (
 CREATE TABLE exercise_category (
   category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_muscle_category (
   category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -78,6 +82,7 @@ CREATE TABLE exercise_equipment (
   equipment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   description TEXT,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (equipment_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -87,6 +92,7 @@ CREATE TABLE exercise (
   description TEXT,
   category_id INTEGER UNSIGNED NOT NULL,
   muscle_group_id INTEGER UNSIGNED,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (exercise_id),
   FOREIGN KEY (category_id) REFERENCES exercise_category(category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -95,6 +101,7 @@ CREATE TABLE equipment_for_exercise (
   exercise_equipment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   exercise_id INTEGER UNSIGNED NOT NULL,
   equipment_id INTEGER UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (exercise_equipment_id),
   FOREIGN KEY (exercise_id) REFERENCES exercise (exercise_id),
   FOREIGN KEY (equipment_id) REFERENCES exercise_equipment (equipment_id)
@@ -103,12 +110,14 @@ CREATE TABLE equipment_for_exercise (
 CREATE TABLE coach_category (
   category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   category_name VARCHAR(255),
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE state (
   state_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   state_name VARCHAR(255) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (state_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -118,6 +127,7 @@ CREATE TABLE coach (
   category_id INTEGER UNSIGNED,
   bio TEXT,
   state_id INTEGER UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (coach_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id),
   FOREIGN KEY (category_id) REFERENCES coach_category (category_id),
@@ -130,6 +140,7 @@ CREATE TABLE workout_plan (
   coach_id INTEGER UNSIGNED,
   plan_name VARCHAR(255) NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (plan_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id),
   FOREIGN KEY (coach_id) REFERENCES coach (coach_id)
@@ -142,7 +153,9 @@ CREATE TABLE exercise_in_workout_plan (
   sets INTEGER, -- expected performance
   reps INTEGER, -- expected performance
   duration_minutes INTEGER,    -- expected performance
+  calories INTEGER,
   complete_by_date DATE NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (exercise_in_plan_id),
   FOREIGN KEY (plan_id) REFERENCES workout_plan(plan_id),
   FOREIGN KEY (exercise_id) REFERENCES exercise(exercise_id)
@@ -173,6 +186,7 @@ CREATE TABLE subscription (
   subscription_start_date DATE,
   subscription_end_date DATE,
   isActive BOOL DEFAULT FALSE,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (subscription_id),
   FOREIGN KEY (subscriber_id) REFERENCES user(user_id),
   FOREIGN KEY (coach_id) REFERENCES coach(coach_id)
@@ -187,6 +201,7 @@ CREATE TABLE exercise_media (
   media_url VARCHAR(255) NOT NULL,
   description TEXT,
   upload_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (media_id),
   FOREIGN KEY (exercise_id) REFERENCES exercise(exercise_id),
   FOREIGN KEY (coach_id) REFERENCES coach(coach_id),
@@ -200,6 +215,7 @@ CREATE TABLE payment (
   payment_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   amount DECIMAL(10, 2),
   payment_method VARCHAR(255), -- ie paypal, credit. not actual card numbers
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (payment_id),
   FOREIGN KEY (subscription_id) REFERENCES subscription(subscription_id),
   FOREIGN KEY (user_id) REFERENCES user(user_id)
@@ -234,6 +250,8 @@ CREATE TABLE weight_goal (
   target_weight INTEGER UNSIGNED NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   date_to_complete DATE NOT NULL,
+  achieved BOOL DEFAULT FALSE,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (goal_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -245,11 +263,12 @@ CREATE TABLE fitness_goal (
   description TEXT NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   date_to_complete DATE NOT NULL,
+  achieved BOOL DEFAULT FALSE,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (goal_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id),
   FOREIGN KEY (exercise_id) REFERENCES exercise (exercise_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 INSERT INTO user (email, first_name, last_name, gender, birth_date, creation_date) 
 VALUES
