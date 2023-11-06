@@ -1,3 +1,28 @@
 from django.contrib import admin
+from .models import *
 
 # Register your models here.
+admin.site.register(Coach)
+admin.site.register(CoachCategory)
+admin.site.register(CoachReview)
+admin.site.register(EquipmentForExercise)
+admin.site.register(Exercise)
+admin.site.register(ExerciseCategory)
+admin.site.register(ExerciseEquipment)
+admin.site.register(ExerciseInWorkoutPlan)
+admin.site.register(ExerciseMedia)
+admin.site.register(ExerciseMuscleCategory)
+admin.site.register(FitnessGoal)
+admin.site.register(IntakeLog)
+admin.site.register(MentalHealthLog)
+admin.site.register(Message)
+admin.site.register(Payment)
+admin.site.register(PhysicalHealthLog)
+admin.site.register(ProgressPhoto)
+admin.site.register(State)
+admin.site.register(Subscription)
+admin.site.register(User)
+admin.site.register(UserCredentials)
+admin.site.register(WeightGoal)
+admin.site.register(WorkoutLog)
+admin.site.register(WorkoutPlan)
