@@ -322,14 +322,13 @@ class User(models.Model):
 
 class UserCredentials(models.Model):
     user = models.OneToOneField(User, models.DO_NOTHING, primary_key=True)
-    salt = models.CharField(max_length=64)
-    hashed_password = models.CharField(max_length=64)
+    hashed_password = models.CharField(max_length=120)
     last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(UserCredentials, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'user_credentials'
