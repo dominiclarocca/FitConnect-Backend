@@ -20,7 +20,7 @@ class Coach(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Coach, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach'
@@ -34,7 +34,7 @@ class CoachCategory(models.Model):
         return self.category_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(CoachCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach_category'
@@ -63,7 +63,7 @@ class EquipmentForExercise(models.Model):
         return self.equipment
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(EquipmentForExercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'equipment_for_exercise'
@@ -80,7 +80,7 @@ class Exercise(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Exercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise'
@@ -94,7 +94,7 @@ class ExerciseCategory(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_category'
@@ -109,7 +109,7 @@ class ExerciseEquipment(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseEquipment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_equipment'
@@ -129,7 +129,7 @@ class ExerciseInWorkoutPlan(models.Model):
         return self.exercise
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseInWorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_in_workout_plan'
@@ -149,7 +149,7 @@ class ExerciseMedia(models.Model):
         return self.description
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseMedia, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_media'
@@ -163,7 +163,7 @@ class ExerciseMuscleCategory(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseMuscleCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_muscle_category'
@@ -182,7 +182,7 @@ class FitnessGoal(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(FitnessGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'fitness_goal'
@@ -240,7 +240,7 @@ class Payment(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Payment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'payment'
@@ -280,7 +280,7 @@ class State(models.Model):
         return self.state_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(State, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'state'
@@ -346,7 +346,7 @@ class WeightGoal(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(WeightGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'weight_goal'
@@ -381,7 +381,7 @@ class WorkoutPlan(models.Model):
         return self.plan_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(WorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'workout_plan'
