@@ -4,9 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from .serializers import UserSerializer, UserCredentialsSerializer
-from .models import User
+from .models import User, UserCredentials
+
+import django
 
 def validate_password(password):
     if len(password) < 7:
@@ -32,8 +35,8 @@ class CreateUserView(APIView):
                 return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
             serializer.save()
-            hasher = PasswordHasher()
-            hashed_password = hasher.hash(password)
+            ph = PasswordHasher()
+            hashed_password = ph.hash(password)
             credentials_serializer = UserCredentialsSerializer(data={'user' : serializer.data['user_id'],'hashed_password' : hashed_password})
 
             if credentials_serializer.is_valid():
@@ -46,3 +49,31 @@ class CreateUserView(APIView):
         else:
             print('serializer was not valid')
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    def check_password(self, user_id, password): #Checks that provided password matches the stored hash
+        ph = PasswordHasher()
+        user_credentials = UserCredentials.objects.get(pk=user_id)
+        hash = getattr(user_credentials, 'hashed_password')
+        try:
+            ph.verify(hash,password)
+            return True
+        except VerifyMismatchError as e:
+            return False
+
+    def get(self, request):
+        email = request.query_params.get("email") 
+        try:
+            django.core.validators.validate_email(email) #Check that email is valid before hitting db
+            user = User.objects.get(email=email)         #Will throw exception if user does not exist
+        except:
+            return Response({'Error' : 'Invalid Email or Password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_id = getattr(user, 'user_id')
+        password = request.query_params.get("password")
+
+        if self.check_password(user_id, password): #Verify that the password was correct
+            user_serializer = UserSerializer(user)
+            return Response({'user' : user_serializer.data},status=status.HTTP_200_OK)
+        else:
+            return Response({'Error' : 'Invalid Email or Password'}, status=status.HTTP_400_BAD_REQUEST)
