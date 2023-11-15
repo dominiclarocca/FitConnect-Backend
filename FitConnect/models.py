@@ -7,6 +7,10 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
 
 
 class Coach(models.Model):
@@ -20,7 +24,7 @@ class Coach(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Coach, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach'
@@ -34,7 +38,7 @@ class CoachCategory(models.Model):
         return self.category_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(CoachCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach_category'
@@ -63,7 +67,7 @@ class EquipmentForExercise(models.Model):
         return self.equipment
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(EquipmentForExercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'equipment_for_exercise'
@@ -80,7 +84,7 @@ class Exercise(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Exercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise'
@@ -94,7 +98,7 @@ class ExerciseCategory(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_category'
@@ -109,7 +113,7 @@ class ExerciseEquipment(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseEquipment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_equipment'
@@ -129,7 +133,7 @@ class ExerciseInWorkoutPlan(models.Model):
         return self.exercise
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseInWorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_in_workout_plan'
@@ -149,7 +153,7 @@ class ExerciseMedia(models.Model):
         return self.description
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseMedia, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_media'
@@ -163,7 +167,7 @@ class ExerciseMuscleCategory(models.Model):
         return self.name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(ExerciseMuscleCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_muscle_category'
@@ -182,7 +186,7 @@ class FitnessGoal(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(FitnessGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'fitness_goal'
@@ -240,7 +244,7 @@ class Payment(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(Payment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'payment'
@@ -280,7 +284,7 @@ class State(models.Model):
         return self.state_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(State, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'state'
@@ -322,14 +326,13 @@ class User(models.Model):
 
 class UserCredentials(models.Model):
     user = models.OneToOneField(User, models.DO_NOTHING, primary_key=True)
-    salt = models.CharField(max_length=64)
-    hashed_password = models.CharField(max_length=64)
+    hashed_password = models.CharField(max_length=120)
     last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(UserCredentials, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'user_credentials'
@@ -347,7 +350,7 @@ class WeightGoal(models.Model):
         return self.user
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(WeightGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'weight_goal'
@@ -382,7 +385,25 @@ class WorkoutPlan(models.Model):
         return self.plan_name
     def save(self, *args, **kwargs):
         self.last_update = timezone.now()
-        super(User, self).save(*args, **kwargs)
+        super(WorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'workout_plan'
+
+#Create a custom subclass of DRF Token to work with our custom User class
+#From https://stackoverflow.com/questions/66642029/django-rest-framework-generate-a-token-for-a-non-built-in-user-model-class
+class AuthToken(Token):
+    user = models.OneToOneField(
+            User, 
+            related_name='auth_token',
+            on_delete=models.CASCADE,
+            verbose_name=gettext_lazy("User")
+    )
+    class Meta(Token.Meta):
+        db_table = 'token'
+
+#Automatically create token when user is created
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        AuthToken.objects.create(user=instance)
