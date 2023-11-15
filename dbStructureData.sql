@@ -16,8 +16,7 @@ CREATE TABLE user (
 
 CREATE TABLE user_credentials (
   user_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  salt VARCHAR(64) NOT NULL,
-  hashed_password VARCHAR(64) NOT NULL,
+  hashed_password VARCHAR(120) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id)
@@ -435,4 +434,3 @@ VALUES
   (3, 75, '2023-11-17', '2024-07-17'),
   (1, 68, '2023-11-18', '2024-08-18'),
   (2, 62, '2023-11-19', '2024-09-19');
-  

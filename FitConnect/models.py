@@ -7,6 +7,10 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
 
 
 class Coach(models.Model):
@@ -385,3 +389,21 @@ class WorkoutPlan(models.Model):
     class Meta:
         managed = False
         db_table = 'workout_plan'
+
+#Create a custom subclass of DRF Token to work with our custom User class
+#From https://stackoverflow.com/questions/66642029/django-rest-framework-generate-a-token-for-a-non-built-in-user-model-class
+class AuthToken(Token):
+    user = models.OneToOneField(
+            User, 
+            related_name='auth_token',
+            on_delete=models.CASCADE,
+            verbose_name=gettext_lazy("User")
+    )
+    class Meta(Token.Meta):
+        db_table = 'token'
+
+#Automatically create token when user is created
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        AuthToken.objects.create(user=instance)
