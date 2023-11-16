@@ -3,7 +3,7 @@ CREATE SCHEMA fitness;
 USE fitness;
 
 CREATE TABLE user (
-  user_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL AUTO_INCREMENT,
   email VARCHAR(254) UNIQUE NOT NULL,
   first_name VARCHAR(255),
   last_name VARCHAR(255),
@@ -15,7 +15,7 @@ CREATE TABLE user (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE user_credentials (
-  user_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL AUTO_INCREMENT,
   hashed_password VARCHAR(120) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id),
@@ -23,18 +23,18 @@ CREATE TABLE user_credentials (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE intake_log (
-  intake_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
+  intake_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
   intake_type ENUM ('Water', 'Calorie') NOT NULL,
-  amount INTEGER UNSIGNED NOT NULL,
+  amount INTEGER  NOT NULL,
   date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   PRIMARY KEY (intake_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE physical_health_log (
-  health_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
+  health_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
   measure_type ENUM ('Weight', 'Height') NOT NULL,
   amount DECIMAL(5, 2) NOT NULL, -- in kilograms for weight, in centimeters for height (?)
   date DATE DEFAULT (CURRENT_DATE) NOT NULL,
@@ -43,8 +43,8 @@ CREATE TABLE physical_health_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE mental_health_log (
-  health_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
+  health_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
   stress_level ENUM('Low', 'Medium', 'High') NOT NULL,
   sleep_quality ENUM('Poor', 'Fair', 'Good', 'Excellent') NOT NULL,
   mood ENUM('Happy', 'Neutral', 'Sad') NOT NULL,
@@ -54,8 +54,8 @@ CREATE TABLE mental_health_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE progress_photo (
-  photo_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
+  photo_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
   photo_path VARCHAR(255) NOT NULL,
   description TEXT,
   date DATE DEFAULT (CURRENT_DATE) NOT NULL,
@@ -64,21 +64,21 @@ CREATE TABLE progress_photo (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_category (
-  category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id INTEGER  NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_muscle_category (
-  category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id INTEGER  NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_equipment (
-  equipment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  equipment_id INTEGER  NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -86,20 +86,20 @@ CREATE TABLE exercise_equipment (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise (
-  exercise_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  exercise_id INTEGER  NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
   description TEXT,
-  category_id INTEGER UNSIGNED NOT NULL,
-  muscle_group_id INTEGER UNSIGNED,
+  category_id INTEGER  NOT NULL,
+  muscle_group_id INTEGER ,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (exercise_id),
   FOREIGN KEY (category_id) REFERENCES exercise_category(category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE equipment_for_exercise (
-  exercise_equipment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  exercise_id INTEGER UNSIGNED NOT NULL,
-  equipment_id INTEGER UNSIGNED NOT NULL,
+  exercise_equipment_id INTEGER  NOT NULL AUTO_INCREMENT,
+  exercise_id INTEGER  NOT NULL,
+  equipment_id INTEGER  NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (exercise_equipment_id),
   FOREIGN KEY (exercise_id) REFERENCES exercise (exercise_id),
@@ -107,25 +107,25 @@ CREATE TABLE equipment_for_exercise (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE coach_category (
-  category_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  category_id INTEGER  NOT NULL AUTO_INCREMENT,
   category_name VARCHAR(255),
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE state (
-  state_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  state_id INTEGER  NOT NULL AUTO_INCREMENT,
   state_name VARCHAR(255) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (state_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE coach (
-  coach_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
-  category_id INTEGER UNSIGNED,
+  coach_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
+  category_id INTEGER ,
   bio TEXT,
-  state_id INTEGER UNSIGNED NOT NULL,
+  state_id INTEGER  NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (coach_id),
   FOREIGN KEY (user_id) REFERENCES user (user_id),
@@ -134,9 +134,9 @@ CREATE TABLE coach (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE workout_plan (
-  plan_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
-  coach_id INTEGER UNSIGNED,
+  plan_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
+  coach_id INTEGER ,
   plan_name VARCHAR(255) NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -146,9 +146,9 @@ CREATE TABLE workout_plan (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_in_workout_plan (
-  exercise_in_plan_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  plan_id INTEGER UNSIGNED NOT NULL,
-  exercise_id INTEGER UNSIGNED NOT NULL,
+  exercise_in_plan_id INTEGER  NOT NULL AUTO_INCREMENT,
+  plan_id INTEGER  NOT NULL,
+  exercise_id INTEGER  NOT NULL,
   sets INTEGER, -- expected performance
   reps INTEGER, -- expected performance
   duration_minutes INTEGER,    -- expected performance
@@ -161,14 +161,14 @@ CREATE TABLE exercise_in_workout_plan (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE workout_log (
-  workout_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  plan_id INTEGER UNSIGNED,
-  exercise_in_plan_id INTEGER UNSIGNED,
-  user_id INTEGER UNSIGNED NOT NULL,
-  coach_id INTEGER UNSIGNED,
+  workout_id INTEGER  NOT NULL AUTO_INCREMENT,
+  plan_id INTEGER ,
+  exercise_in_plan_id INTEGER ,
+  user_id INTEGER  NOT NULL,
+  coach_id INTEGER ,
   workout_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
-  sets INTEGER UNSIGNED, -- actual performance
-  reps INTEGER UNSIGNED, -- actual performance
+  sets INTEGER , -- actual performance
+  reps INTEGER , -- actual performance
   duration_minutes INTEGER, -- actual performance
   notes TEXT,
   PRIMARY KEY (workout_id),
@@ -179,9 +179,9 @@ CREATE TABLE workout_log (
 
 # There is a table in the drive that shows relation betwen isActive and subscription_start_date inside of the google drive
 CREATE TABLE subscription (
-  subscription_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  subscriber_id INTEGER UNSIGNED NOT NULL,
-  coach_id INTEGER UNSIGNED NOT NULL,
+  subscription_id INTEGER  NOT NULL AUTO_INCREMENT,
+  subscriber_id INTEGER  NOT NULL,
+  coach_id INTEGER  NOT NULL,
   subscription_start_date DATE,
   subscription_end_date DATE,
   isActive BOOL DEFAULT FALSE,
@@ -192,10 +192,10 @@ CREATE TABLE subscription (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE exercise_media (
-  media_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  exercise_id INTEGER UNSIGNED NOT NULL,
-  coach_id INTEGER UNSIGNED, -- The coach who uploaded the media (optional)
-  user_id INTEGER UNSIGNED, -- The user for whom the media is designated for (optional)
+  media_id INTEGER  NOT NULL AUTO_INCREMENT,
+  exercise_id INTEGER  NOT NULL,
+  coach_id INTEGER , -- The coach who uploaded the media (optional)
+  user_id INTEGER , -- The user for whom the media is designated for (optional)
   media_type ENUM ('Image', 'Video', 'Audio') NOT NULL,
   media_url VARCHAR(255) NOT NULL,
   description TEXT,
@@ -208,9 +208,9 @@ CREATE TABLE exercise_media (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE payment (
-  payment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  subscription_id INTEGER UNSIGNED NOT NULL,
-  user_id INTEGER UNSIGNED NOT NULL,
+  payment_id INTEGER  NOT NULL AUTO_INCREMENT,
+  subscription_id INTEGER  NOT NULL,
+  user_id INTEGER  NOT NULL,
   payment_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   amount DECIMAL(10, 2),
   payment_method VARCHAR(255), -- ie paypal, credit. not actual card numbers
@@ -221,9 +221,9 @@ CREATE TABLE payment (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE message (
-  message_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  sender_id INTEGER UNSIGNED NOT NULL,
-  recipient_id INTEGER UNSIGNED NOT NULL,
+  message_id INTEGER  NOT NULL AUTO_INCREMENT,
+  sender_id INTEGER  NOT NULL,
+  recipient_id INTEGER  NOT NULL,
   message_text TEXT NOT NULL,
   sent_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (message_id),
@@ -232,10 +232,10 @@ CREATE TABLE message (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE coach_review (
-  review_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  coach_id INTEGER UNSIGNED NOT NULL,
-  user_id INTEGER UNSIGNED NOT NULL,
-  rating TINYINT UNSIGNED NOT NULL, -- 1-10 scale?
+  review_id INTEGER  NOT NULL AUTO_INCREMENT,
+  coach_id INTEGER  NOT NULL,
+  user_id INTEGER  NOT NULL,
+  rating TINYINT  NOT NULL, -- 1-10 scale?
   review_text TEXT NOT NULL, -- users should give rational for rating
   review_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   PRIMARY KEY (review_id),
@@ -244,9 +244,9 @@ CREATE TABLE coach_review (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE weight_goal (
-  goal_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
-  target_weight INTEGER UNSIGNED NOT NULL,
+  goal_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
+  target_weight INTEGER  NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   date_to_complete DATE NOT NULL,
   achieved BOOL DEFAULT FALSE,
@@ -256,9 +256,9 @@ CREATE TABLE weight_goal (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE fitness_goal (
-  goal_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  user_id INTEGER UNSIGNED NOT NULL,
-  exercise_id INTEGER UNSIGNED NOT NULL,
+  goal_id INTEGER  NOT NULL AUTO_INCREMENT,
+  user_id INTEGER  NOT NULL,
+  exercise_id INTEGER  NOT NULL,
   description TEXT NOT NULL,
   creation_date DATE DEFAULT (CURRENT_DATE) NOT NULL,
   date_to_complete DATE NOT NULL,
