@@ -6,6 +6,11 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.utils import timezone
+from django.utils.translation import gettext_lazy
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
 
 
 class Coach(models.Model):
@@ -14,9 +19,12 @@ class Coach(models.Model):
     category = models.ForeignKey('CoachCategory', models.DO_NOTHING, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     state = models.ForeignKey('State', models.DO_NOTHING)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(Coach, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach'
@@ -25,9 +33,12 @@ class Coach(models.Model):
 class CoachCategory(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=255, blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.category_name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(CoachCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'coach_category'
@@ -51,9 +62,12 @@ class EquipmentForExercise(models.Model):
     exercise_equipment_id = models.AutoField(primary_key=True)
     exercise = models.ForeignKey('Exercise', models.DO_NOTHING)
     equipment = models.ForeignKey('ExerciseEquipment', models.DO_NOTHING)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.equipment
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(EquipmentForExercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'equipment_for_exercise'
@@ -65,9 +79,12 @@ class Exercise(models.Model):
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey('ExerciseCategory', models.DO_NOTHING)
     muscle_group_id = models.PositiveIntegerField(blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(Exercise, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise'
@@ -76,9 +93,12 @@ class Exercise(models.Model):
 class ExerciseCategory(models.Model):
     category_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(ExerciseCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_category'
@@ -88,9 +108,12 @@ class ExerciseEquipment(models.Model):
     equipment_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(ExerciseEquipment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_equipment'
@@ -105,9 +128,12 @@ class ExerciseInWorkoutPlan(models.Model):
     duration_minutes = models.IntegerField(blank=True, null=True)
     calories = models.IntegerField(blank=True, null=True)
     complete_by_date = models.DateField()
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.exercise
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(ExerciseInWorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_in_workout_plan'
@@ -122,9 +148,12 @@ class ExerciseMedia(models.Model):
     media_url = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     upload_date = models.DateField()
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.description
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(ExerciseMedia, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_media'
@@ -133,9 +162,12 @@ class ExerciseMedia(models.Model):
 class ExerciseMuscleCategory(models.Model):
     category_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(ExerciseMuscleCategory, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'exercise_muscle_category'
@@ -149,9 +181,12 @@ class FitnessGoal(models.Model):
     creation_date = models.DateField()
     date_to_complete = models.DateField()
     achieved = models.IntegerField(blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(FitnessGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'fitness_goal'
@@ -204,9 +239,12 @@ class Payment(models.Model):
     payment_date = models.DateField()
     amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     payment_method = models.CharField(max_length=255, blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(Payment, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'payment'
@@ -241,9 +279,12 @@ class ProgressPhoto(models.Model):
 class State(models.Model):
     state_id = models.AutoField(primary_key=True)
     state_name = models.CharField(max_length=255)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.state_name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(State, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'state'
@@ -256,7 +297,7 @@ class Subscription(models.Model):
     subscription_start_date = models.DateField(blank=True, null=True)
     subscription_end_date = models.DateField(blank=True, null=True)
     isActive = models.IntegerField(db_column='isActive', blank=True, null=True)  
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.subscriber
     class Meta:
@@ -271,10 +312,13 @@ class User(models.Model):
     last_name = models.CharField(max_length=255, blank=True, null=True)
     gender = models.CharField(max_length=6, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-    creation_date = models.DateTimeField(blank=True, null=True)
-    last_update = models.DateTimeField()
+    creation_date = models.DateTimeField(default=timezone.now)
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(User, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'user'
@@ -282,11 +326,13 @@ class User(models.Model):
 
 class UserCredentials(models.Model):
     user = models.OneToOneField(User, models.DO_NOTHING, primary_key=True)
-    salt = models.CharField(max_length=64)
-    hashed_password = models.CharField(max_length=64)
-    last_update = models.DateTimeField()
+    hashed_password = models.CharField(max_length=120)
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(UserCredentials, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'user_credentials'
@@ -299,9 +345,12 @@ class WeightGoal(models.Model):
     creation_date = models.DateField()
     date_to_complete = models.DateField()
     achieved = models.IntegerField(blank=True, null=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.user
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(WeightGoal, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'weight_goal'
@@ -331,9 +380,30 @@ class WorkoutPlan(models.Model):
     coach = models.ForeignKey(Coach, models.DO_NOTHING, blank=True, null=True)
     plan_name = models.CharField(max_length=255)
     creation_date = models.DateField()
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.plan_name
+    def save(self, *args, **kwargs):
+        self.last_update = timezone.now()
+        super(WorkoutPlan, self).save(*args, **kwargs)
     class Meta:
         managed = False
         db_table = 'workout_plan'
+
+#Create a custom subclass of DRF Token to work with our custom User class
+#From https://stackoverflow.com/questions/66642029/django-rest-framework-generate-a-token-for-a-non-built-in-user-model-class
+class AuthToken(Token):
+    user = models.OneToOneField(
+            User, 
+            related_name='auth_token',
+            on_delete=models.CASCADE,
+            verbose_name=gettext_lazy("User")
+    )
+    class Meta(Token.Meta):
+        db_table = 'token'
+
+#Automatically create token when user is created
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        AuthToken.objects.create(user=instance)
